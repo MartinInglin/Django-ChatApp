@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatroom</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+  </head>
+  <body>
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        {% block header %}
+        {% endblock %}
+
+        <div class="page-content">
+        <main class="mdl-layout__content">
+            {% block content %}
+            {% endblock %}
+
+        </main>
+      </div>
+    </div>
+
+  </body>
+</html>
