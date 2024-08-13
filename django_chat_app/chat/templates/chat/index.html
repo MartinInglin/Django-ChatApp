@@ -1,5 +1,61 @@
 {% extends "base.html" %} {% block header %}
 
+<script>
+  async function sendMessage() {
+    let currentDate = getCurrentDate();
+    let form = new FormData();
+    let token = "{{ csrf_token }}";
+    form.append("textmessage", messageField.value);
+    form.append("csrfmiddlewaretoken", token);
+
+    try {
+      messageContainer.innerHTML += `
+        <div class="message-container-self" id="deleteMessage">
+          <span class="author-self"> {{ request.user.username }} </span>
+          <span class="message-self"> ${messageField.value} </span>
+          <span class="date">${currentDate}</span>
+          <img class="check-image" src="./../../../static/img/check.svg" alt="">
+        </div>
+        `;
+
+      let response = await fetch("/chat/", {
+        //Das ist die Route, wo die Daten gespeichert werden im Backend.
+        method: "POST",
+        body: form,
+      });
+
+      let json = await response.json();
+      let parsedJson = JSON.parse(json);
+      console.log(parsedJson);
+
+      document.getElementById("deleteMessage").remove();
+
+      messageContainer.innerHTML += `
+        <div class="message-container-self">
+          <span class="author-self"> {{ request.user.username }} </span>
+          <span class="message-self"> ${messageField.value} </span>
+          <span class="date">${currentDate}</span>
+          <img class="check-image" src="./../../../static/img/double-check.svg" alt="">
+        </div>
+      `;
+
+      messageField.value = "";
+    } catch (error) {
+      console.error("Error occured during storing", error);
+    }
+  }
+
+  function getCurrentDate() {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const date = new Date();
+    let year = date.getFullYear();
+    let month = months[date.getMonth()];
+    let day = date.getDate();
+
+    return `${month}. ${day}. ${year}`;
+  }
+</script>
+
 <header class="mdl-layout__header">
   <div class="mdl-layout__header-row">
     {% if request.user.is_authenticated %}
@@ -14,9 +70,6 @@
 
     <div class="mdl-layout-spacer"></div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
-      <a class="mdl-navigation__link" href="">Link</a>
       <a class="mdl-navigation__link" href="{% url 'logout' %}">Logout</a>
     </nav>
   </div>
@@ -24,25 +77,38 @@
 <div class="mdl-layout__drawer">
   <span class="mdl-layout-title">Chatroom</span>
   <nav class="mdl-navigation">
-    <a class="mdl-navigation__link" href="">Link</a>
-    <a class="mdl-navigation__link" href="">Link</a>
-    <a class="mdl-navigation__link" href="">Link</a>
     <a class="mdl-navigation__link" href="{% url 'logout' %}">Logout</a>
   </nav>
 </div>
 
-{% endblock %} {% block content %} {% if request.user.is_authenticated %} {% for message in messages %}
-<div>{{ message.author }}: {{ message.text }} <span class="color-gray">{{ message.created_at}}</span></div>
-{% endfor %}
+{% endblock %} {% block content %} {% if request.user.is_authenticated %}
 
-<form action="/chat/" method="post">
+<div id="messageContainer" class="messages-container">
+  {% for message in messages %} {% if request.user == message.author %}
+  <div class="message-container-self">
+    <span class="author-self"> {{ message.author }} </span>
+    <span class="message-self"> {{ message.text }} </span>
+    <span class="date">{{ message.created_at }}</span>
+    <img class="check-image" src="./../../../static/img/double-check.svg" alt="" />
+  </div>
+  {% else %}
+  <div class="message-container">
+    <span class="author"> {{ message.author }} </span>
+    <span class="message"> {{ message.text }} </span>
+    <span class="date">{{ message.created_at }}</span>
+    <img class="check-image" src="./../../../static/img/double-check.svg" alt="" />
+  </div>
+  {% endif %} {% endfor %}
+</div>
+
+<form onsubmit="sendMessage(); return false;" method="post">
   {% csrf_token %}
   <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-    <input class="mdl-textfield__input" name="textmessage" type="text" id="sample3" />
-    <label class="mdl-textfield__label" for="sample3">Text...</label>
+    <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField" />
+    <label class="mdl-textfield__label" for="messageField">Text...</label>
   </div>
 
-  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Send</button>
+  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Send</button>
 </form>
 
 {% else %}

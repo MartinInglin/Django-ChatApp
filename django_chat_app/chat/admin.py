@@ -16,6 +16,8 @@ class MessageAdmin(
         "text",
         "created_at",
         "id",
+        "author",
+        "receiver",
     )  # Hier werden die Spalten definiert, die in der Übersicht angezeigt werden
     search_fields = ("text",)  # Dadurch wird ein Suchfeld eingefügt
 

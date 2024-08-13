@@ -20,6 +20,8 @@ from django.urls import path
 from django.views.generic import RedirectView
 
 from chat.views import index, login_view, logout_view, register_view
+from django.conf.urls.static import static
+from django_chat_app import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,4 +30,4 @@ urlpatterns = [
     path("login/", login_view, name="login"),
     path("logout/", logout_view, name="logout"),
     path("register/", register_view, name="register"),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
