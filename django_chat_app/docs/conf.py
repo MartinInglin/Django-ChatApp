@@ -35,3 +35,5 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+
+exclude_patterns = ["modules.rst", "chat.rst", "django_chat_app.rst", "manage.rst", "chat.migrations.rst"]

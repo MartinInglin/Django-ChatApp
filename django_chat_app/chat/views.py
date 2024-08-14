@@ -12,6 +12,9 @@ from django.middleware.csrf import CsrfViewMiddleware
     login_url="/login/"
 )  # Leitet automatisch auf die Login Seite weiter wenn nicht eingeloggt
 def index(request):
+    """
+    Comment for the function.
+    """
     if request.method == "POST":
         print("Received data " + request.POST["textmessage"])
         receiver, create = User.objects.get_or_create(username="zuegelwagen")
