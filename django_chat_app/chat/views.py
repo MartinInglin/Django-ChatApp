@@ -18,7 +18,7 @@ def index(request):
     if request.method == "POST":
         print("Received data " + request.POST["textmessage"])
         receiver, create = User.objects.get_or_create(username="zuegelwagen")
-        myChat = Chat.objects.get(id=1)
+        myChat, create = Chat.objects.get_or_create(id=1)
         new_message = (
             Message.objects.create(  # Erstellt einen neuen Eintrag in der Datenbank
                 text=request.POST["textmessage"],
